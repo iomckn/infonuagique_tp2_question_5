@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Web Service</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 24px; }
+    pre { background: #f4f4f4; padding: 12px; border-radius: 8px; }
+    .ok { color: #0a7; }
+    .bad { color: #c00; }
+  </style>
+</head>
+<body>
+  <h1>Web Service (Nginx)</h1>
+  <p>Appel de l’API Flask via Kubernetes Service DNS :</p>
+  <code>http://api-service:3000/items</code>
+
+  <h2>Résultat</h2>
+  <p id="status">Chargement...</p>
+  <pre id="output"></pre>
+
+  <script>
+    async function load() {
+      const url = "api/items";
+      try {
+        const res = await fetch(url);
+        const data = await res.json();
+        document.getElementById("status").textContent = "OK";
+        document.getElementById("status").className = "ok";
+        document.getElementById("output").textContent = JSON.stringify(data, null, 2);
+      } catch (e) {
+        document.getElementById("status").textContent =
+          "Erreur (si tu es en local hors K8s, c’est normal). Dans K8s, ça marche via DNS interne.";
+        document.getElementById("status").className = "bad";
+        document.getElementById("output").textContent = String(e);
+      }
+    }
+    load();
+  </script>
+</body>
+</html>
